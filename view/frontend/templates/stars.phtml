@@ -1,0 +1,50 @@
+<?php
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$helperData = $objectManager->create('Netreviews\Avisverifies\Helper\Data');
+$storeId = $block->getStoreId();
+
+if($helperData->getMainConfig('enabledwebsite',$storeId) == '1' && $helperData->getPlatformConfig('displayprodreviews',$storeId) == 'yes' && $helperData->getAdvancedConfig('add_reviews_to_product_page',$storeId) == '1'):
+
+    $averageReviews = $block->getAverageProduct();
+    $nb_reviews     = isset($averageReviews['nb_reviews'])  ? $averageReviews['nb_reviews']     : 0 ;
+    $rate           = isset($averageReviews['rate'])        ? $averageReviews['rate']           : 0 ;
+    $rateFormated   = number_format($rate,2);
+    $ratePercent    = round(($rate*100)/5);
+
+    if ($nb_reviews > 0):
+
+        if ($helperData->getAdvancedConfig('activate_rich_snippets',$storeId) == 'schema'): ?>
+
+        <div class="netreviews-stars">
+            <span itemprop="aggregateRating" itemscope="" itemtype="http://schema.org/AggregateRating">
+                <div class="netreviews_bg_stars netreviews_bg_stars_gold" title="<?php echo $rateFormated; ?>/5">
+                    <span style="width:<?php echo $ratePercent; ?>%">&nbsp;</span>
+                </div>
+                <a href="javascript:showNetreviewsTab();" class="netreviews-stars-link" rel="nofollow">
+                    <span itemprop="reviewCount"><?php echo $nb_reviews; ?></span>&nbsp;<?php echo __('review(s)'); ?>
+                </a>
+                <meta itemprop="ratingValue" content="<?php echo $rateFormated; ?>"> 
+                <meta itemprop="worstRating" content="1"> 
+                <meta itemprop="bestRating" content="5">
+            </span>
+        </div>
+
+        <?php else: ?>
+
+        <div class="netreviews-stars">
+            <span>
+                <div class="netreviews_bg_stars netreviews_bg_stars_gold" title="<?php echo $rateFormated; ?>/5">
+                    <span style="width:<?php echo $ratePercent; ?>%">&nbsp;</span>
+                </div>
+                <a href="javascript:showNetreviewsTab();" class="netreviews-stars-link" rel="nofollow">
+                    <span><?php echo $nb_reviews; ?></span>&nbsp;<?php echo __('review(s)'); ?>
+                </a>
+            </span>
+        </div>
+
+    <?php endif;  
+
+    endif;
+    
+endif;?>

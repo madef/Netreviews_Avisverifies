@@ -1,0 +1,24 @@
+<?php
+
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$helperData = $objectManager->create('Netreviews\Avisverifies\Helper\Data');
+$storeId = $block->getStoreId();
+
+if($helperData->getMainConfig('enabledwebsite',$storeId) == '1' && $helperData->getPlatformConfig('displayprodreviews',$storeId) == 'yes' && $helperData->getAdvancedConfig('add_reviews_to_product_page',$storeId) == '1'):
+
+    $averageReviews = $block->getAverageProduct();
+    $nb_reviews     = isset($averageReviews['nb_reviews'])  ? $averageReviews['nb_reviews']     : 0 ;
+    $rate           = isset($averageReviews['rate'])        ? $averageReviews['rate']           : 0 ;
+    $ratePercent    = round(($rate*100)/5);
+    if ($nb_reviews > 0): ?>
+
+        <div class="netreviews-stars">
+            <span>
+                <div class="netreviews_bg_stars netreviews_bg_stars_gold">
+                    <span style="width:<?php echo $ratePercent; ?>%">&nbsp;</span>
+                </div>
+            </span>
+        </div>
+
+    <?php endif; ?>
+<?php endif; ?>

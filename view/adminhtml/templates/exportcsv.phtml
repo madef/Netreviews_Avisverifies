@@ -1,0 +1,226 @@
+<?php
+$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$helperDATA = $objectManager -> create('Netreviews\Avisverifies\Helper\Data');
+
+
+
+// ===== RECUPERAR DATOS DEL FORM =====
+$o_postExport = $this -> getExportFormData();
+$i_storeId = $o_postExport['store_ids'][0];
+$i_until = $o_postExport['selectUntil'];
+$a_status = $o_postExport['checkboxStatus'];
+$i_products = $o_postExport['selectProducts'];
+$fromDate = $o_postExport['fromDate'] . ' 00:00:00'; // yy-mm-dd
+$toDate = $o_postExport['toDate'] . ' 23:59:59'; // yy-mm-dd
+
+// Asignar valores a las variables del helper Data para poder recuperar la información de los productos para PLA.
+$helperDATA -> setIdStore( $i_storeId );
+if ( $i_storeId == 0 ) {
+	$helperDATA -> setDefaultOrStoreOrWebsite( 'default' );
+} else {
+	$helperDATA -> setDefaultOrStoreOrWebsite( 'stores' );
+}
+
+// Recuperar delay de la base de datos del cliente si existe.
+$delay = $helperDATA -> getSpecificPlatformConfig( 'delay', $i_storeId, 'stores' );
+$delay = ( $delay == ''  ||  $delay == null  ||  empty( $delay )  ||  ! $delay ) ? 0 : $delay;
+
+$a_row = array();
+
+
+
+// ===== RECUPERAR DATOS DE LOS PEDIDOS SIN PRODUCTOS POR TIENDA =====
+
+if ( $this -> isDate( $fromDate ) === true && $this -> isDate( $toDate ) === true ) {
+	$o_orders = $helperDATA -> getOrdersAddingDateFilter( $i_storeId, $fromDate, $toDate );
+} else if ( $this -> isDate( $fromDate ) === true && $this -> isDate( $toDate ) === false ) {
+	$o_orders = $helperDATA -> getOrdersAddingDateFilter( $i_storeId, $fromDate );
+} else if ( $this -> isDate( $fromDate ) === false && $this -> isDate( $toDate ) === true ) {
+	$o_orders = $helperDATA -> getOrdersAddingDateFilter( $i_storeId, NULL , $toDate );
+} else if ( $this -> isDate( $fromDate ) === false && $this -> isDate( $toDate ) === false ) {
+	$o_orders = $helperDATA -> getOrdersAddingDateFilter( $i_storeId );
+}
+
+// Filtra los pedidos por status.
+$helperDATA -> addFilterStatus( $o_orders, $a_status );
+
+$store = $objectManager -> get('Magento\Store\Model\StoreManagerInterface') -> getStore();
+
+// Encabezados del archivo
+$headings = array(	"store_id", "order_status", "id_order", "email", "lastname", "firstname", "delayBeforeSendWebsiteReview", "date_order", "amount");
+
+$i = 0;
+foreach( $o_orders as $_order ) {
+	$currentOrder = $_order -> getData();
+	
+	$a_row[ $i ] = array(
+					$currentOrder["store_id"],
+					$currentOrder["status"],
+					$currentOrder["increment_id"], // use entity_id to get teh DB id.
+					$currentOrder["customer_email"],
+					$currentOrder["customer_lastname"],
+					$currentOrder["customer_firstname"],
+					$delay, // delayBeforeSendWebsiteReview
+					$currentOrder["created_at"],
+					$currentOrder["base_grand_total"] . " " . $currentOrder["base_currency_code"]
+				);
+	
+	// =============== WITH PRODUCTS =============== // ===== RECUPERAR DATOS CON PRODUCTOS POR TIENDA =====
+	if ( $i_products == 1 ) {
+		
+		$listProducts = $helperDATA -> getProducts( $_order );
+		
+		$nbProducts = count( $listProducts );
+		$onlyOrderInfo = ( $nbProducts > 1 ) ? $a_row[ $i ] : null ;
+		
+		foreach ( $listProducts as $k => $product ) {
+			
+			// If there are more of 1 product we take the base data from the current order.
+			if ( $k > 0 ) {
+				$a_row[ $i ] = $onlyOrderInfo;
+			}
+			
+			array_push( $a_row[ $i ],
+						$product['id_product_in_db'],
+						$product['name_product']
+			);
+			( $i == 0 && $k == 0 ) ? array_push( $headings, 'id_product', 'product_name' ) : null ; // Add heading only one time.
+			
+			// If product have SKU then add it.
+			if ( array_key_exists( 'sku', $product ) ) {
+				array_push( $a_row[ $i ], $product['sku'] );
+				( $i == 0 && $k == 0 ) ? array_push( $headings, 'sku' ) : null ; // Add heading only one time.
+			}
+			
+			// If product have MPN then add it.
+			if ( array_key_exists( 'MPN', $product ) ) {
+				array_push( $a_row[ $i ], $product['MPN'] );
+				( $i == 0 && $k == 0 ) ? array_push( $headings, 'MPN' ) : null ; // Add heading only one time.
+			}
+			
+			// If product have GTIN/UPC then add it.
+			if ( array_key_exists( 'GTIN_UPC', $product ) ) {
+				array_push( $a_row[ $i ], $product['GTIN_UPC'] );
+				( $i == 0 && $k == 0 ) ? array_push( $headings, 'GTIN/UPC' ) : null ; // Add heading only one time.
+			}
+			
+			// If product have GTIN/EAN then add it.
+			if ( array_key_exists( 'GTIN_EAN', $product ) ) {
+				array_push( $a_row[ $i ], $product['GTIN_EAN'] );
+				( $i == 0 && $k == 0 ) ? array_push( $headings, 'GTIN/EAN' ) : null ; // Add heading only one time.
+			}
+			
+			// If product have GTIN/JAN then add it.
+			if ( array_key_exists( 'GTIN_JAN', $product ) ) {
+				array_push( $a_row[ $i ], $product['GTIN_JAN'] );
+				( $i == 0 && $k == 0 ) ? array_push( $headings, 'GTIN/JAN' ) : null ; // Add heading only one time.
+			}
+			
+			// If product have GTIN/ISBN then add it.
+			if ( array_key_exists( 'GTIN_ISBN', $product ) ) {
+				array_push( $a_row[ $i ], $product['GTIN_ISBN'] );
+				( $i == 0 && $k == 0 ) ? array_push( $headings, 'GTIN/ISBN' ) : null ; // Add heading only one time.
+			}
+			
+			// If product have brand_name then add it.
+			if ( array_key_exists( 'brand_name', $product ) ) {
+				array_push( $a_row[ $i ], $product['brand_name'] );
+				( $i == 0 && $k == 0 ) ? array_push( $headings, 'brand' ) : null ; // Add heading only one time.
+			}
+			
+			// If product have category then add it.
+			if ( array_key_exists( 'category', $product ) ) {
+				array_push( $a_row[ $i ], $product['category'] );
+				( $i == 0 && $k == 0 ) ? array_push( $headings, 'category' ) : null ; // Add heading only one time.
+			}
+			
+			// The rest of product data.
+			array_push( $a_row[ $i ],
+						$product['url'],
+						$product['url_image']
+			);
+				( $i == 0 && $k == 0 ) ? array_push( $headings, 'url_product', 'url_image' ) : null ; // Add heading only one time.
+			
+			// If product have info1 then add it.
+			if ( array_key_exists( 'info1', $product ) ) {
+				array_push( $a_row[ $i ], $product['info1'] );
+				( $i == 0 && $k == 0 ) ? array_push( $headings, 'info1' ) : null ; // Add heading only one time.
+			}
+			
+			// If product have info2 then add it.
+			if ( array_key_exists( 'info2', $product ) ) {
+				array_push( $a_row[ $i ], $product['info2'] );
+				( $i == 0 && $k == 0 ) ? array_push( $headings, 'info2' ) : null ; // Add heading only one time.
+			}
+			
+			// If product have info3 then add it.
+			if ( array_key_exists( 'info3', $product ) ) {
+				array_push( $a_row[ $i ], $product['info3'] );
+				( $i == 0 && $k == 0 ) ? array_push( $headings, 'info3' ) : null ; // Add heading only one time.
+			}
+			
+			// If product have info4 then add it.
+			if ( array_key_exists( 'info4', $product ) ) {
+				array_push( $a_row[ $i ], $product['info4'] );
+				( $i == 0 && $k == 0 ) ? array_push( $headings, 'info4' ) : null ; // Add heading only one time.
+			}
+			
+			// If product have info5 then add it.
+			if ( array_key_exists( 'info5', $product ) ) {
+				array_push( $a_row[ $i ], $product['info5'] );
+				( $i == 0 && $k == 0 ) ? array_push( $headings, 'info5' ) : null ; // Add heading only one time.
+			}
+			
+			// If product have info6 then add it.
+			if ( array_key_exists( 'info6', $product ) ) {
+				array_push( $a_row[ $i ], $product['info6'] );
+				( $i == 0 && $k == 0 ) ? array_push( $headings, 'info6' ) : null ; // Add heading only one time.
+			}
+			
+			// If product have info7 then add it.
+			if ( array_key_exists( 'info7', $product ) ) {
+				array_push( $a_row[ $i ], $product['info7'] );
+				( $i == 0 && $k == 0 ) ? array_push( $headings, 'info7' ) : null ; // Add heading only one time.
+			}
+			
+			// If product have info8 then add it.
+			if ( array_key_exists( 'info8', $product ) ) {
+				array_push( $a_row[ $i ], $product['info8'] );
+				( $i == 0 && $k == 0 ) ? array_push( $headings, 'info8' ) : null ; // Add heading only one time.
+			}
+			
+			// If product have info9 then add it.
+			if ( array_key_exists( 'info9', $product ) ) {
+				array_push( $a_row[ $i ], $product['info9'] );
+				( $i == 0 && $k == 0 ) ? array_push( $headings, 'info9' ) : null ; // Add heading only one time.
+			}
+			
+			// If product have info10 then add it.
+			if ( array_key_exists( 'info10', $product ) ) {
+				array_push( $a_row[ $i ], $product['info10'] );
+				( $i == 0 && $k == 0 ) ? array_push( $headings, 'info10' ) : null ; // Add heading only one time.
+			}
+			
+			// delayBeforeSendProductReview
+			array_push( $a_row[ $i ], '0' );
+			( $i == 0 && $k == 0 ) ? array_push( $headings, 'delayBeforeSendProductReview' ) : null ; // Add heading only one time.
+			
+			$i++;
+		}
+	// =============== WITH PRODUCTS END ===============
+	} else {
+		$i++;
+	}
+	
+} // foreach $o_orders
+
+
+
+// =============== CREACION DEL CSV ===============
+
+$csvContent = $this -> contentFileCSV( $headings, $a_row );
+$fromOnlyDate = str_replace( " 00:00:00", "", $fromDate );
+$toOnlyDate = str_replace( " 23:59:59", "", $toDate );
+$fileName = "NetReviews_LastOrders_StoreId_" . $i_storeId . "_from(" . $fromOnlyDate . ")_to(" . $toOnlyDate . ")";
+$this -> downloadFileCSV( $fileName, $csvContent );
+?>

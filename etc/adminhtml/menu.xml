@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+    <add id="Netreviews_Avisverifies::top_level"
+    	resource="Netreviews_Avisverifies::menu_items"
+    	title="Verified Reviews"
+    	module="Netreviews_Avisverifies"
+    	sortOrder="9999"
+    	/>
+    	
+    <add id="Netreviews_Avisverifies::configuration"
+    	resource="Netreviews_Avisverifies::menu_items"
+    	title="Configuration"
+    	action="adminhtml/system_config/edit/section/av_configuration"
+    	module="Netreviews_Avisverifies"
+    	sortOrder="9996"
+    	parent="Netreviews_Avisverifies::top_level"
+    	/>
+    	
+    <add id="Netreviews_Avisverifies::pla"
+    	resource="Netreviews_Avisverifies::menu_items"
+    	title="Google Shopping - Product Data (PLA)"
+    	action="adminhtml/system_config/edit/section/av_pla"
+    	module="Netreviews_Avisverifies"
+    	sortOrder="9997"
+    	parent="Netreviews_Avisverifies::top_level"
+    	/>
+    	
+    <add id="Netreviews_Avisverifies::management"
+    	resource="Netreviews_Avisverifies::menu_items"
+    	title="Export reviews (CSV file)"
+    	action="netreviews_avisverifies_admin_management/index/index"
+    	module="Netreviews_Avisverifies"
+    	sortOrder="9998"
+    	parent="Netreviews_Avisverifies::top_level"
+    	/>
+    	
+    <!-- <add id="Netreviews_Avisverifies::installation"
+    	resource="Netreviews_Avisverifies::menu_items"
+    	title="Installation Status"
+    	action="netreviews_avisverifies_admin_pagedetest/index/index"
+    	module="Netreviews_Avisverifies"
+    	sortOrder="9999"
+    	parent="Netreviews_Avisverifies::top_level"
+    	/> -->
+    </menu>
+</config>

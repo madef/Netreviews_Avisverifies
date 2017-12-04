@@ -1,0 +1,211 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+    	
+        <tab id="netreviews" translate="label" sortOrder="10">
+            <label>VerifiedReviews</label>
+        </tab>
+        
+        <section id="av_configuration" translate="label" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Configuration</label>
+            <tab>netreviews</tab>
+            <resource>Netreviews_Avisverifies::menu_items</resource>
+            
+            <group id="system_integration" translate="label comment" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General Configuration</label>
+                <comment>IMPORTANT: BEFORE ALL PLEASE SELECT THE STORE OR WEBSITE TO CONFIGURE IN THE TOP-LEFT MENU. You can configure the module for all websites, for a specific website or for a specific store view.</comment>
+                
+                <field id="enabledwebsite" translate="label comment" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Module in this view</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>By activating the module, you will reap your website and product reviews. Go to the advanced configuration if you want to change the product reviews configuration.</comment>
+                </field>
+                
+                <field id="secretkey" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Secret Key</label>
+                </field>
+                
+                <field id="idwebsite" translate="label" type="text" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Website ID</label>
+                </field>
+            </group>
+            
+            <group id="advanced_configuration" translate="label" type="text" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Advanced Configuration</label>
+                
+                <field id="add_reviews_to_product_page" translate="label comment" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Add reviews to product page</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>This configuration is used to add the product reviews block in the product page.</comment>
+                </field>
+                
+                <!-- <field id="product_light_widget" translate="label comment" type="select" sortOrder="3" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Product Light widget</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Use this configuration to change the type of product widget to small design.</comment>
+                </field>
+                
+                <field id="show_empty_produt_message" translate="label comment" type="select" sortOrder="4" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Show "No product reviews" message</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>This configuration is used to tell our module to show a "No product reviews" message.</comment>
+                </field> -->
+                
+                <field id="has_jquery" translate="label comment" type="select" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>jQuery present on the site?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Change this to yes, if jQuery is already used on the site.</comment>
+                </field>
+                
+                <field id="activate_rich_snippets" translate="label" type="select" sortOrder="6" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Activate the Rich-Snippets in the product page</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectActivateRichSnippets</source_model>
+                </field>
+                
+                <field id="use_parent_url" translate="label comment" type="select" sortOrder="9" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Use the URL of the Parent product</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>ATTENTION! OPTION ONLY RESERVED FOR VERIFIED-REVIEWS TEAM. Change it only if our team contact you.</comment>
+                </field>
+
+                <field id="use_parent_sku" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Use the SKU and PLA-GoogleShopping data of the Parent product.</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>ATTENTION! OPTION ONLY RESERVED FOR VERIFIED-REVIEWS TEAM. Change it only if our team contact you.</comment>
+                </field>
+            </group>
+        </section>
+		
+        <section id="av_pla" translate="label" sortOrder="2" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Google Shopping - Product Data (PLA)</label>
+            <tab>netreviews</tab>
+            <resource>Netreviews_Avisverifies::menu_items</resource>
+            
+            <group id="fields_mapping" translate="label comment" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Fields Mapping</label>
+                <comment>IMPORTANT: Before all please select THE WEBSITE WHERE YOU ALREADY CONFIGURED THE MODULE, otherwise Google Shopping won't recognize your product data. Then UNCHECK ONLY THE FIELDS that you are sure to get extra product data for Google Shopping.</comment>
+				
+                <field id="note" translate="label" type="label" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="1">
+                    <label>Google Shopping PLA can only be configured in WEBSITES, please select in the top-left menu the website that you want to configure.</label>
+                </field>
+                                
+                <field id="id" translate="label comment" type="select" sortOrder="3" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>ID</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                    <comment>WARNING! ID is already got from your products, change it only if you are sure that the module is collecting a wrong data.</comment>
+                </field>
+				
+                <field id="sku" translate="label comment" type="select" sortOrder="4" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>SKU</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                    <comment>WARNING! SKU is already got from your products, change it only if you are sure that the module is collecting a wrong data.</comment>
+                </field>
+				
+                <field id="description" translate="label comment" type="select" sortOrder="5" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Short description (product name)</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                    <comment>WARNING! SHORT DESCRIPTION is already got from your products, change it only if you are sure that the module is collecting a wrong data.</comment>
+                </field>
+				
+                <field id="link" translate="label comment" type="select" sortOrder="6" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Link</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                    <comment>WARNING! PRODUCT LINK is already got from your products, change it only if you are sure that the module is collecting a wrong data.</comment>
+                </field>
+				
+                <field id="image_link" translate="label comment" type="select" sortOrder="7" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Image link</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                    <comment>WARNING! PRODUCT IMAGE LINK is already got from your products, change it only if you are sure that the module is collecting a wrong data.</comment>
+                </field>
+				
+                <field id="brand" translate="label" type="select" sortOrder="8" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Brand</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                </field>
+				
+                <field id="category" translate="label" type="select" sortOrder="9" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Category</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                </field>
+				
+                <field id="mpn" translate="label" type="select" sortOrder="10" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>mpn</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                </field>
+				
+                <field id="gtin_upc" translate="label" type="select" sortOrder="11" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>gtin_upc</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                </field>
+				
+                <field id="gtin_ean" translate="label" type="select" sortOrder="12" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>gtin_ean</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                </field>
+				
+                <field id="gtin_jan" translate="label" type="select" sortOrder="13" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>gtin_jan</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                </field>
+				
+                <field id="gtin_isbn" translate="label" type="select" sortOrder="14" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>gtin_isbn</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                </field>
+				
+                <field id="info1" translate="label" type="select" sortOrder="15" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Extra Info 1</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                </field>
+				
+                <field id="info2" translate="label" type="select" sortOrder="16" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Extra Info 2</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                </field>
+				
+                <field id="info3" translate="label" type="select" sortOrder="17" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Extra Info 3</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                </field>
+				
+                <field id="info4" translate="label" type="select" sortOrder="18" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Extra Info 4</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                </field>
+				
+                <field id="info5" translate="label" type="select" sortOrder="19" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Extra Info 5</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                </field>
+				
+                <field id="info6" translate="label" type="select" sortOrder="20" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Extra Info 6</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                </field>
+				
+                <field id="info7" translate="label" type="select" sortOrder="21" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Extra Info 7</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                </field>
+				
+                <field id="info8" translate="label" type="select" sortOrder="22" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Extra Info 8</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                </field>
+				
+                <field id="info9" translate="label" type="select" sortOrder="23" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Extra Info 9</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                </field>
+				
+                <field id="info10" translate="label" type="select" sortOrder="24" showInDefault="0" showInWebsite="1" showInStore="0">
+                    <label>Extra Info 10</label>
+                    <source_model>Netreviews\Avisverifies\Model\Config\Source\customSelectProductAttributes</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <av_configuration>
+            <advanced_configuration>
+                <add_reviews_to_product_page>1</add_reviews_to_product_page>
+                <has_jquery>1</has_jquery>
+                <activate_rich_snippets>default</activate_rich_snippets>
+            </advanced_configuration>
+        </av_configuration>
+    </default>
+</config>

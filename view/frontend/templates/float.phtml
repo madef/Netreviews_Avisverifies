@@ -1,0 +1,31 @@
+<?php
+
+$ObjectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$helperData = $ObjectManager->create('Netreviews\Avisverifies\Helper\Data');
+$storeId = $block->getStoreId();
+$scriptfloat = $helperData->getPlatformConfig('scriptfloat',$storeId);
+
+// if widget must be display
+if($helperData->getMainConfig('enabledwebsite',$storeId) == '1' && $helperData->getPlatformConfig('scriptfloat_allowed',$storeId) == 'yes' && !empty($scriptfloat)) { 
+
+    // with requireJS
+    if ($helperData->getPlatformConfig('requirejs',$storeId) == 1) {
+         $floatingWidget = str_replace(">","&avClose;",str_replace("<","&avOpen;",str_replace("'","",trim($scriptfloat))));
+         ?>
+             <script type="text/javascript">
+                requirejs(['jquery'], function( $ ) {
+                    var scriptWidgetAv = '<?php echo $floatingWidget;?>';
+                    scriptWidgetAv = scriptWidgetAv.replace(/&avClose;/gi,'>');
+                    scriptWidgetAv = scriptWidgetAv.replace(/&avOpen;/gi,'<');
+                    $('head').append(scriptWidgetAv);
+                });
+            </script>
+         <?php
+    }
+
+    // without requireJS
+    if ($helperData->getPlatformConfig('requirejs',$storeId) == 0) {
+        echo $scriptfloat;
+    }
+
+}

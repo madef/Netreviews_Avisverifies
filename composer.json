@@ -1,0 +1,41 @@
+{
+  "name": "netreviews/avisverifies",
+  "description": "A Magento 2 module to display website and product reviews.",
+  "type": "magento2-module",
+  "version": "3.0.8",
+  "license": [
+    "AFL-3.0"
+  ],
+  "authors": [
+    {
+      "name": "Carlos Alberto RAYA VACA",
+      "email": "craya@opiniones-verificadas.com",
+      "homepage": "http://www.opiniones-verificadas.com/",
+      "role": "Developer"
+    },
+    {
+      "name": "Loic VIGNE",
+      "email": "vigne@avis-verifies.com",
+      "homepage": "http://www.avis-verifies.com/",
+      "role": "Developer"
+    },
+    {
+      "name": "Derhen HOULE",
+      "email": "derhen@avis-verifies.com",
+      "homepage": "http://www.avis-verifies.com/",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": "~5.5.0|~5.6.0|~7.0.0|~7.1.0|~7.1.1|~7.1.2|~7.1.3|~7.1.4|~7.1.5|~7.1.6|~7.1.7|~7.1.8"
+  },
+  "autoload": {
+    "files": [
+      "registration.php",
+      "Setup/InstallSchema.php"
+    ],
+    "psr-4": {
+      "Netreviews\\Avisverifies\\": ""
+    }
+  }
+}

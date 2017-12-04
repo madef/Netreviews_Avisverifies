@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="admin">
+        <route id="netreviews_avisverifies_admin_pagedetest" frontName="netreviews_avisverifies_admin_pagedetest">
+            <module name="Netreviews_Avisverifies"/>
+        </route>
+        <route id="netreviews_avisverifies_admin_management" frontName="netreviews_avisverifies_admin_management">
+            <module name="Netreviews_Avisverifies"/>
+        </route>
+        <route id="netreviews_avisverifies_admin_exportcsv" frontName="netreviews_avisverifies_admin_exportcsv">
+            <module name="Netreviews_Avisverifies"/>
+        </route>
+    </router>
+</config>

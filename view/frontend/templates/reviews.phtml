@@ -1,0 +1,102 @@
+<?php
+
+$ObjectManager = \Magento\Framework\App\ObjectManager::getInstance();
+$helperData = $ObjectManager->create('Netreviews\Avisverifies\Helper\Data');
+$helperReviewsAPI = $ObjectManager->create('Netreviews\Avisverifies\Helper\ReviewsAPI');
+$storeId = $block->getStoreId();
+
+if($helperData->getMainConfig('enabledwebsite',$storeId) == '1' && $helperData->getPlatformConfig('displayprodreviews',$storeId) == 'yes' && $helperData->getAdvancedConfig('add_reviews_to_product_page',$storeId) == '1') {
+
+    $ProductSku     = $block->getProductSku();
+    $ProductId      = $block->getProductId();
+
+    if(!empty($ProductSku) || !empty($ProductId)) {
+
+        $pageNumber     = 0;
+        $reviewsPerPage = 10;
+        $lang           = explode("_", $this->getLocale());
+        $ajaxUrl        = $block->getUrl('AvisVerifies/Index/')."AjaxReviews";
+        $averageReviews = $helperReviewsAPI->getProductAverage($ProductSku, $ProductId);
+        $nb_reviews     = isset($averageReviews['nb_reviews'])  ? $averageReviews['nb_reviews']     : 0 ;
+        $rate           = isset($averageReviews['rate'])        ? round($averageReviews['rate'],2)  : 0 ;
+        $ratePercent    = round(($rate*100)/5);
+
+        if( $nb_reviews > 0 ) { ?>
+
+            <!--:: start verified reviews ::-->
+            <div id="idTabavisverifies">
+                <div id="netreviews_header_new">
+                    <img class="netreviews_header_logo_new" src="<?php echo $this->getViewFileUrl('Netreviews_Avisverifies::images/logo_full_'.$lang[0].'.png'); ?>" alt="<?php echo __('Verified Reviews'); ?>">
+                    <a class="netreviews_header_link_new" href="<?php echo $helperData->getPlatformConfig('urlcertificat',$storeId); ?>" target="_blank" >
+                        <?php echo __('View the trust certificate'); ?>
+                    </a>
+                    <div class="netreviewsclear">&nbsp;</div>
+                    <div class="netreviews_header_rate_text_new">
+                        <?php echo $rate; ?>/5
+                    </div>
+                    <div class="netreviews_header_rate_stars_new">
+                        <div class="netreviews_bg_stars_big netreviews_bg_stars netreviews_bg_stars_big_gold">
+                            <span style="width:<?php echo $ratePercent ?>%;">&nbsp;</span>
+                        </div>
+                    </div>
+                    <div class="netreviews_header_rate_comment_new">
+                        <?php echo __('Based on'); ?> <?php echo $nb_reviews; ?> <?php echo __('customer(s) reviews'); ?>
+                    </div>
+                    <div class="netreviewsclear">&nbsp;</div>
+                </div>
+                
+                <div id="netreviews_reviews_content">
+                    <?php $reviewsList = $helperReviewsAPI->getProductReviews($ProductSku, $ProductId, $pageNumber, $reviewsPerPage, array(1, 2, 3, 4, 5)); ?>
+                    <?php $pageNumber++; ?>
+                    <?php if (json_decode($reviewsList)): ?>
+                        <?php $reviewsList = json_decode($reviewsList); ?>
+                        <?php foreach ($reviewsList as $review): ?>
+                                <div class="reviewAV">
+                                    <div class="reviewInfosAV">
+                                        <div style="text-transform:capitalize">
+                                            <?php $name = (!empty($review->firstname))?$review->firstname." ":"Anonymous ";
+                                            $name .= (!empty($review->lastname))?$review->lastname[0].".":"";
+                                            echo __( $name ); ?>
+                                        </div>
+                                        <div>
+                                            <?php echo __('the'); ?>&nbsp;<?php echo date(__('d/m/Y'), strtotime($review->review_date)); ?> 
+                                        </div>
+                                        <div class="netreviews-stars">
+                                            <div class="netreviews_bg_stars netreviews_bg_stars_gold">
+                                                <span style="width:<?php echo ($review->rate/5)*100; ?>%">&nbsp;</span>
+                                            </div>
+                                            <?php echo $review->rate;?>/5
+                                        </div>
+                                    </div>  
+                                    <div class="triangle-border top">
+                                        <?php echo $review->review; ?>
+                                    </div>
+                                </div> 
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                    <div id="ajax_comment_content"></div>
+                </div>
+
+                <input id="avisVerifiesReviewsPerPage" type="hidden" value="<?php echo $reviewsPerPage; ?>" />
+                <input id="avisVerifiesPageNumber" type="hidden" value="<?php echo $pageNumber; ?>" />
+                <input id="avisVerifiesAjaxUrl" type="hidden" value="<?php echo $ajaxUrl; ?>" />
+                <input id="avisVerifiesProductSku" type="hidden" value="<?php echo $ProductSku; ?>" />
+                <input id="avisVerifiesProductId" type="hidden" value="<?php echo $ProductId; ?>" />
+                <input id="avisverifiesNbTotalReviews" type="hidden" value="<?php echo $nb_reviews; ?>" />
+
+
+                <?php if ($nb_reviews > $reviewsPerPage): ?>
+                    <button type="button" onclick="netReviewsMoreReviews();" id="av_load_next_page"><?php echo __('More Reviews...'); ?></button>
+                    <br/>
+                    <img id="avisVerifiesAjaxImage" alt="loader" src="<?php echo $this->getViewFileUrl('Netreviews_Avisverifies::images/pagination-loader.gif'); ?>" />
+                <?php endif; ?>
+
+            </div>
+            <!--:: end verified reviews ::-->
+
+
+
+      <?php
+        }
+    }
+}
